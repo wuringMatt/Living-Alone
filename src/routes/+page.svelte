@@ -35,7 +35,7 @@
                 </a>
             {/each}
             <a class="pageButton" on:click={logout} href="/" style="background-color: var(--secondary-bg-color); margin-bottom: 20px;">
-                <p class="buttonText">Logout</p>
+                <p class="buttonText">Logoutt</p>
             </a>
         </div>
     {:else}
