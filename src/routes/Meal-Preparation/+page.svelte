@@ -1,8 +1,9 @@
 <script>
     export let data;
     import Modal from './Modal.svelte';
-    import {getData, setData} from '$lib/dataHandling.js';
+    import {deleteData, getData, setData} from '$lib/dataHandling.js';
     import {arrayUnion} from 'firebase/firestore';
+    import TitleBar from '$lib/components/titleBar.svelte';
 
     let showModal1 = false;
     let showModal2 = false;
@@ -11,7 +12,7 @@
     let meals = data.data;
     let user;
     let userMeals;
-    let daysOfWeek = ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"];
+    let daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
     let day = 0;
 
     getUserData();
@@ -55,13 +56,34 @@
             });
     }
 
-    function setPrefrences(){
-        const prefrence = document.getElementById("prefrence").value;
-        setData("users/{userid}", {"prefrences": {"allergie": arrayUnion({name: prefrence})}})
+    function setDisliked(){
+        const disliked = document.getElementById("disliked").value;
+        disliked.trim();
+        setData("users/{userid}", {"prefrences": {"disliked": arrayUnion({name: disliked})}})
             .then(() => {
                 getUserData();
             });
     }
+
+    // function deleteDisliked(id) {
+    //     deleteData("users/{userid}", {"prefrences": {"disliked"}})
+    //         .then(() => {
+    //             getUserData();
+    //         });
+    // }
+
+    function setAllergie(){
+        const allergie = document.getElementById("allergie").value;
+        allergie.trim();
+        setData("users/{userid}", {"prefrences": {"allergie": arrayUnion({name: allergie})}})
+            .then(() => {
+                getUserData();
+            });
+    }
+
+    // function deleteAllergie(id) {
+    //
+    // }
 
     function setMeal(meal) {
         meal.recipe['id'] = day;
@@ -75,14 +97,24 @@
             });
     }
 
-    getData("users/{userid}/meals")
-        .then((res) => {
-            userMeals = res;
-        }).catch( err => console.log(err)
-    );
+    function clear(){
+        deleteData("users/{userid}/meals/" + daysOfWeek[day])
+            .then(() => {
+                setData("users/{userid}/meals/" + daysOfWeek[day], {id: day})
+                    .then(() => {
+                        getData("users/{userid}/meals")
+                            .then((res) => {
+                                userMeals = res;
+                                userMeals.sort((a, b) => a.id - b.id);
+                            }).catch( err => console.log(err) )
+                    })
+            })
+    }
 
 </script>
 
+
+<TitleBar title="Meal Prep"/>
 <body>
 {#if user}
 <button on:click={() => (showModal1  = true)}>prefrences</button>
@@ -90,8 +122,15 @@
 {#if userMeals}
     <div class="card-container">
             {#each userMeals as meal, day}
-                <div on:click={() => { showModal2 = true; changeDay(day); }} class="card">
-                    {#if meal}
+                <div class="card">
+                    <div on:click={() => {changeDay(day); showModal2 = true;}}>
+                        <p>change</p>
+                    </div>
+                    <div on:click={() => {changeDay(day); clear();}}>
+                        <p>clear</p>
+                    </div>
+                <div on:click={() =>  {changeDay(day); showModal4 = true;}}>
+                    {#if meal.label}
                         <p>{daysOfWeek[meal.id] ? daysOfWeek[meal.id] : "no data"}</p>
                         <p>{meal.label ? meal.label : "no data"}</p>
                         <img src={meal.image ? meal.image : "no data"} alt="Meal Image" />
@@ -102,6 +141,7 @@
                         <p>No meal data available</p>
                     {/if}
                 </div>
+                </div>
             {/each}
     </div>
 {/if}
@@ -110,16 +150,69 @@
         prefrences
     </h2>
     <h2>
-        allergies / disliked food
+        allergies
     </h2>
     <form>
-        <input id="prefrence"><button on:click={setPrefrences}>submit</button>
-        {#if user}
-           {#each user.prefrences.allergie as allergie}
+        <select id="allergie" name="allergie">
+            <option value="alcohol-cocktail">alcohol-cocktail</option>
+            <option value=" alcohol-free ">alcohol-free</option>
+            <option value="celery-free">celery-free</option>
+            <option value="crustacean-free">crustacean-free</option>
+            <option value="dairy-free">dairy-free</option>
+            <option value="DASH">DASH</option>
+            <option value="egg-free">egg-free</option>
+            <option value="fish-free">fish-free</option>
+            <option value="fodmap-free">fodmap-free</option>
+            <option value="gluten-free">gluten-free</option>
+            <option value="immuno-supportive">immuno-supportive</option>
+            <option value="keto-friendly">keto-friendly</option>
+            <option value="kidney-friendly">kidney-friendly</option>
+            <option value="kosher">kosher</option>
+            <option value="low-potassium">low-potassium</option>
+            <option value="low-sugar">low-sugar</option>
+            <option value="lupine-free">lupine-free</option>
+            <option value="Mediterranean">Mediterranean</option>
+            <option value="mollusk-free">mollusk-free</option>
+            <option value="mustard-free">mustard-free</option>
+            <option value="No-oil-added">No-oil-added</option>
+            <option value="paleo">paleo</option>
+            <option value="peanut-free">peanut-free</option>
+            <option value="pecatarian">pecatarian</option>
+            <option value="pork-free">pork-free</option>
+            <option value="red-meat-free">red-meat-free</option>
+            <option value="sesame-free">sesame-free</option>
+            <option value="shellfish-free">shellfish-free</option>
+            <option value="soy-free">soy-free</option>
+            <option value="sugar-conscious">sugar-conscious</option>
+            <option value="sulfite-free">sulfite-free</option>
+            <option value="tree-nut-free">tree-nut-free</option>
+            <option value="vegan">vegan</option>
+            <option value="vegetarian">vegetarian</option>
+            <option value="wheat-free">wheat-free</option>
+        </select>
+        <br><br>
+        <button on:click={setAllergie}>submit</button>
+        {#if user.prefrences.allergie}
+            {#each user.prefrences.allergie as allergie}
                 <div>
                     <p>{allergie.name}</p>
+<!--                    <button on:click={deleteAllergie(id)}>delete</button>-->
                 </div>
-           {/each}
+            {/each}
+        {/if}
+    </form>
+    <h2>
+        disliked food
+    </h2>
+    <form>
+        <input id="disliked"><button on:click={setDisliked}>submit</button>
+        {#if user.prefrences.disliked}
+            {#each user.prefrences.disliked as disliked}
+                <div>
+                    <p>{disliked.name}</p>
+<!--                    <button on:click={deleteDisliked(id)}>delete</button>-->
+                </div>
+            {/each}
         {/if}
     </form>
     <h2>
@@ -142,6 +235,9 @@
     </form>
 </Modal>
 <Modal id={2} bind:showModal={showModal2}>
+    <h2 slot="header">
+        change meal
+    </h2>
     <div class="card-container">
         {#each meals.hits as meal}
             <div on:click={() => setMeal(meal)} class="card">
@@ -160,12 +256,12 @@
     </h2>
     {#if userMeals}
         {#each userMeals as meal}
-            {#if meal}
+            {#if meal.ingredientLines }
                 <p>{meal.label ? meal.label : "no data"}</p>
                 {#each meal.ingredientLines as ingredient}
                     {#if ingredient}
-                        <p>{ingredient ? ingredient : "no data"}</p>
                         <br>
+                        <p>{ingredient ? ingredient : "no data"}</p>
                     {:else}
                         <p>No ingredient data available</p>
                     {/if}
@@ -175,6 +271,25 @@
                 <p>No meal data available</p>
             {/if}
         {/each}
+    {/if}
+</Modal>
+<Modal id={4} bind:showModal={showModal4}>
+    <h2 slot="header">
+        how to make this recipe
+    </h2>
+    {#if userMeals}
+        <p>{userMeals[day].label ? userMeals[day].label : "no data"}</p>
+        {#if userMeals[day].instructionLines}
+        {#each userMeals[day].instructionLines as instruction}
+            <br>
+            <p>{instruction ? instruction : "no data"}</p>
+        {/each}
+        {:else}
+            <p>This recipe does not have a instruction</p>
+        {/if}
+        <br>
+    {:else}
+        <p>No meal data available</p>
     {/if}
 </Modal>
 {/if}

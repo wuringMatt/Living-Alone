@@ -11,21 +11,26 @@ export async function load() {
         }).catch( err => console.log(err) );
 
     const params = [`type=public`, `app_key=${apiKey}`, `app_id=${appId}`, `random=true`, `q=chicken`];
-    if (user.prefrences.allergie) {
+    if (user.prefrences.disliked || user.prefrences.allergie){
         params.pop();
-        user.prefrences.allergie.forEach(allergen => {
+    }
+    if (user.prefrences.disliked) {
+        user.prefrences.disliked.forEach(allergen => {
             params.push(`excluded=${encodeURIComponent(allergen.name)}`);
+        });
+    }
+    if (user.prefrences.allergie) {
+        user.prefrences.allergie.forEach(allergen => {
+            params.push(`health=${encodeURIComponent(allergen.name)}`);
         });
     }
     if (user.prefrences.maxTime) {
         params.push(`time=${user.prefrences.maxTime}`);
     }
-    if (user.prefrences.people) {
-        params.push(`time=${user.prefrences.people}`);
-    }
 
     try {
         const url = params.length > 0 ? `${base_url}?${params.join('&')}` : base_url;
+        console.log(url);
 
         const response = await fetch(url);
 

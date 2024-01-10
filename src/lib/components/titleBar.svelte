@@ -1,13 +1,13 @@
 <script>
     export let title = "Living Alone";
     export let back = true;
-
+    export let link = "/";
 
 </script>
 
 <div id="titleBar">
     {#if back}
-        <a href="/">«</a>
+        <a href="{link}">«</a>
     {/if}
     <h1>{title}</h1>
 </div>

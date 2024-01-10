@@ -34,8 +34,8 @@
                     <p class="buttonText">{page.replace("-", " ")}</p>
                 </a>
             {/each}
-            <a class="pageButton" on:click={logout} href="/" style="background-color: var(--secondary-bg-color); margin-bottom: 20px;">
-                <p class="buttonText">Logoutt</p>
+            <a class="pageButton" on:click={logout} href="/" style="background-color: var(--secondary-bg-color);">
+                <p class="buttonText">Logout</p>
             </a>
         </div>
     {:else}
@@ -56,11 +56,14 @@
         display: grid;
         gap: 20px;
         align-items: center;
+        grid-template-rows: repeat(1fr, 6);
+        margin-bottom: 20px;  
+        height: 70vh;  
     }
 
     .pageButton{
         width: 100%;
-        height: 75px;
+        height: 100%;
         border-radius: 15px;    
         border: 3px solid var(--secondary-bg-color);
         text-decoration: none;

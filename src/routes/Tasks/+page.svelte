@@ -10,28 +10,9 @@
     $: taskList = [];
     $: selectedTask = {}
 
-    const timeTable = {
-        "Twice Weekly": 3,
-        "Weekly": 7,
-        "Biweekly": 14,
-        "Monthly": 30,
-        "Bimonthly": 60,
-        "Quarterly": 90,
-        "Half-yearly": 180,
-    }
-
     getData("users/{userid}/tasks")
     .then((res) => {
         taskList = res
-        taskList.forEach((task) => {
-            if(task.done == true){
-                let today = new Date().toLocaleDateString();
-                if(getDifferenceInDays(task.completionDate, today) >= timeTable[task.frequency]){
-                    task.done = false;
-                    task.completionDate = null;
-                }
-            }
-        })
         console.log(taskList)
     }).catch(err => console.log(err))
 
@@ -190,7 +171,7 @@
         gap: 20px;
         box-sizing: border-box;
         padding: 0 10% 0 10%;
-        height: calc(100vh - 200px);
+        height: calc(100vh - 300px);
     }
 
     .taskGrid{

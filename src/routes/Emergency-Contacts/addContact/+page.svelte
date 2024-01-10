@@ -19,7 +19,7 @@
     }
 </script>
 
-<TitleBar title="Add Contact"/>
+<TitleBar title="Add Contact" link="/Emergency-Contacts"/>
 <section>
     <form on:submit|preventDefault={handleSubmit} >
         <label for="name">Name</label><br>
