@@ -1,7 +1,7 @@
 <script>
     import { getData, setData } from "$lib/dataHandling";
     import { arrayUnion } from "firebase/firestore";
-    import Titlebar from "$lib/components/titlebar.svelte";
+    import Titlebar from "$lib/components/titleBar.svelte";
 
     function handleSubmit(e){
         const formData = new FormData(e.target)
