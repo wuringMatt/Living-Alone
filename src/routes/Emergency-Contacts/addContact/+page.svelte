@@ -1,6 +1,7 @@
 <script>
     import { getData, setData } from "$lib/dataHandling";
     import { arrayUnion } from "firebase/firestore";
+    import Titlebar from "$lib/components/titlebar.svelte";
 
     function handleSubmit(e){
         const formData = new FormData(e.target)
@@ -18,6 +19,7 @@
     }
 </script>
 
+<Titlebar title="Add Contact"/>
 <section>
     <form on:submit|preventDefault={handleSubmit} >
         <label for="name">Name</label><br>

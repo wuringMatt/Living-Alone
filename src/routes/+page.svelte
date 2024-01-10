@@ -34,7 +34,7 @@
                     <p class="buttonText">{page.replace("-", " ")}</p>
                 </a>
             {/each}
-            <a class="pageButton" on:click={logout} href="/" style="background-color: var(--secondary-bg-color);">
+            <a class="pageButton" on:click={logout} href="/" style="background-color: var(--secondary-bg-color); margin-bottom: 20px;">
                 <p class="buttonText">Logout</p>
             </a>
         </div>
