@@ -1,9 +1,9 @@
 <script>
     export let data;
     import Modal from './Modal.svelte';
+    import TitleBar from "$lib/components/titleBar.svelte";
     import {deleteData, getData, setData} from '$lib/dataHandling.js';
     import {arrayUnion} from 'firebase/firestore';
-    import TitleBar from '$lib/components/titleBar.svelte';
 
     let showModal1 = false;
     let showModal2 = false;
@@ -65,12 +65,13 @@
             });
     }
 
-    // function deleteDisliked(id) {
-    //     deleteData("users/{userid}", {"prefrences": {"disliked"}})
-    //         .then(() => {
-    //             getUserData();
-    //         });
-    // }
+    function deleteDisliked(index) {
+        const updatedDisliked = user.prefrences.disliked.filter((disliked, i) => i !== index);
+        setData("users/{userid}", {"prefrences": {"disliked": updatedDisliked}})
+            .then(() => {
+                getUserData();
+            });
+    }
 
     function setAllergie(){
         const allergie = document.getElementById("allergie").value;
@@ -81,9 +82,13 @@
             });
     }
 
-    // function deleteAllergie(id) {
-    //
-    // }
+    function deleteAllergie(index) {
+        const updatedAllergies = user.prefrences.allergie.filter((allergie, i) => i !== index);
+        setData("users/{userid}", {"prefrences": {"allergie": updatedAllergies}})
+            .then(() => {
+                getUserData();
+            });
+    }
 
     function setMeal(meal) {
         meal.recipe['id'] = day;
@@ -116,9 +121,12 @@
 
 <TitleBar title="Meal Prep"/>
 <body>
+<TitleBar title="Meal Plan"/>
 {#if user}
-<button on:click={() => (showModal1  = true)}>prefrences</button>
-<button on:click={() => (showModal3  = true)}>groceries</button>
+    <div class="button-container">
+        <button on:click={() => (showModal1 = true)}>Preferences</button>
+        <button on:click={() => (showModal3 = true)}>Groceries</button>
+    </div>
 {#if userMeals}
     <div class="card-container">
             {#each userMeals as meal, day}
@@ -193,10 +201,10 @@
         <br><br>
         <button on:click={setAllergie}>submit</button>
         {#if user.prefrences.allergie}
-            {#each user.prefrences.allergie as allergie}
+            {#each user.prefrences.allergie as allergie, id}
                 <div>
                     <p>{allergie.name}</p>
-<!--                    <button on:click={deleteAllergie(id)}>delete</button>-->
+                    <button on:click={() => deleteAllergie(id)}>delete</button>
                 </div>
             {/each}
         {/if}
@@ -207,10 +215,10 @@
     <form>
         <input id="disliked"><button on:click={setDisliked}>submit</button>
         {#if user.prefrences.disliked}
-            {#each user.prefrences.disliked as disliked}
+            {#each user.prefrences.disliked as disliked, id}
                 <div>
                     <p>{disliked.name}</p>
-<!--                    <button on:click={deleteDisliked(id)}>delete</button>-->
+                    <button on:click={() => deleteDisliked(id)}>delete</button>
                 </div>
             {/each}
         {/if}
@@ -335,4 +343,22 @@
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
 
+    .button-container {
+        display: flex;
+        justify-content: center;
+        margin-bottom: 20px; /* Adjust as needed */
+    }
+
+    button {
+        margin: 0 10px; /* Adjust as needed for spacing */
+        padding: 10px 20px; /* Adjust as needed for button size */
+        background-color: #3498db; /* Change to your preferred color */
+        color: #fff; /* Change to your preferred text color */
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        font-size: 1em;
+        min-width: 20em;
+        max-width: 22em;
+    }
 </style>
