@@ -26,6 +26,7 @@
 </script>
 
 <TitleBar title="Living Alone" back={false}/>
+Just another test
 <div class="page">
     {#if loggedIn}
         <div class="buttonList">
